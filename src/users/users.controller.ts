@@ -61,41 +61,57 @@ export class UsersController {
   // Atualização específica de informações pessoais
   @Patch('profile/personal')
   @UseGuards(JwtAuthGuard)
-  updatePersonalInfo(@Req() req: any, @Body() personalInfo: {
-    phone?: string;
-    cpf_cnpj?: string;
-    profession?: string;
-    company_name?: string;
-    profile_picture_url?: string;
-  }) {
+  updatePersonalInfo(
+    @Req() req: any,
+    @Body()
+    personalInfo: {
+      phone?: string;
+      cpf_cnpj?: string;
+      profession?: string;
+      company_name?: string;
+      profile_picture_url?: string;
+    },
+  ) {
     return this.usersService.updateProfile(req.user.sub, personalInfo);
   }
 
   // Atualização específica de endereço
   @Patch('profile/address')
   @UseGuards(JwtAuthGuard)
-  updateAddress(@Req() req: any, @Body() addressData: {
-    billing_address?: any;
-  }) {
+  updateAddress(
+    @Req() req: any,
+    @Body()
+    addressData: {
+      billing_address?: any;
+    },
+  ) {
     return this.usersService.updateProfile(req.user.sub, addressData);
   }
 
   // Atualização específica de preferências
   @Patch('profile/preferences')
   @UseGuards(JwtAuthGuard)
-  updatePreferences(@Req() req: any, @Body() preferencesData: {
-    preferences?: any;
-    system_preferences?: any;
-  }) {
+  updatePreferences(
+    @Req() req: any,
+    @Body()
+    preferencesData: {
+      preferences?: any;
+      system_preferences?: any;
+    },
+  ) {
     return this.usersService.updateProfile(req.user.sub, preferencesData);
   }
 
   // Atualização específica de método de pagamento
   @Patch('profile/payment')
   @UseGuards(JwtAuthGuard)
-  updatePaymentMethod(@Req() req: any, @Body() paymentData: {
-    payment_method?: any;
-  }) {
+  updatePaymentMethod(
+    @Req() req: any,
+    @Body()
+    paymentData: {
+      payment_method?: any;
+    },
+  ) {
     return this.usersService.updateProfile(req.user.sub, paymentData);
   }
 

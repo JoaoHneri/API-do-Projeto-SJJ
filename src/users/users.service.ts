@@ -218,31 +218,39 @@ export class UsersService {
   // Método para verificar completude do perfil
   async getProfileCompleteness(id: string) {
     const user = await this.findOne(id);
-    
-    const requiredFields = [
-      'name', 'email', 'phone', 'cpf_cnpj', 'profession'
-    ];
-    
+
+    const requiredFields = ['name', 'email', 'phone', 'cpf_cnpj', 'profession'];
+
     const optionalFields = [
-      'company_name', 'profile_picture_url', 'billing_address', 
-      'payment_method', 'preferences', 'system_preferences'
+      'company_name',
+      'profile_picture_url',
+      'billing_address',
+      'payment_method',
+      'preferences',
+      'system_preferences',
     ];
-    
-    const completedRequired = requiredFields.filter(field => user[field]).length;
-    const completedOptional = optionalFields.filter(field => user[field]).length;
-    
+
+    const completedRequired = requiredFields.filter(
+      (field) => user[field],
+    ).length;
+    const completedOptional = optionalFields.filter(
+      (field) => user[field],
+    ).length;
+
     const completenessPercentage = Math.round(
-      ((completedRequired + completedOptional) / (requiredFields.length + optionalFields.length)) * 100
+      ((completedRequired + completedOptional) /
+        (requiredFields.length + optionalFields.length)) *
+        100,
     );
-    
+
     return {
       percentage: completenessPercentage,
       completed_required: completedRequired,
       total_required: requiredFields.length,
       completed_optional: completedOptional,
       total_optional: optionalFields.length,
-      missing_required: requiredFields.filter(field => !user[field]),
-      missing_optional: optionalFields.filter(field => !user[field])
+      missing_required: requiredFields.filter((field) => !user[field]),
+      missing_optional: optionalFields.filter((field) => !user[field]),
     };
   }
 }
