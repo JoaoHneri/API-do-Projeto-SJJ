@@ -7,9 +7,8 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Res,
-  Req,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';

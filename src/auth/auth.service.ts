@@ -8,7 +8,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { User } from '../users/entities/user.entity';
+import { User, UserStatus } from '../users/entities/user.entity';
 import { JwtPayload } from './strategies/jwt.strategy';
 
 @Injectable()
@@ -40,13 +40,17 @@ export class AuthService {
   ): Promise<{ user: User; access_token: string }> {
     const user = await this.usersService.findByEmail(loginDto.email);
 
-    if (!user || !user.isActive) {
+    if (
+      !user ||
+      user.status !== UserStatus.ACTIVE ||
+      user.deleted_at !== null
+    ) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
-      user.password,
+      user.password_hash,
     );
 
     if (!isPasswordValid) {
@@ -58,7 +62,7 @@ export class AuthService {
 
     // Remove password from response
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
+    const { password_hash, ...userWithoutPassword } = user;
 
     return { user: userWithoutPassword as User, access_token };
   }
@@ -66,9 +70,9 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.usersService.findByEmail(email);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && (await bcrypt.compare(password, user.password_hash))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: userPassword, ...result } = user;
+      const { password_hash: userPasswordHash, ...result } = user;
       return result as User;
     }
 
