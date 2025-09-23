@@ -18,23 +18,40 @@ http://localhost:3000
 }
 ```
 
-**Resposta Esperada:**
+**Resposta Correta (Cookie HTTP-only é definido automaticamente):**
 ```json
 {
   "user": {
     "id": "uuid-gerado",
+    "tenant_id": null,
     "name": "João Silva Santos",
     "email": "joao.silva@advogados.com.br",
+    "phone": null,
+    "cpf_cnpj": null,
+    "profession": null,
+    "company_name": null,
+    "profile_picture_url": null,
     "subscription_plan": "free",
     "subscription_status": "trial",
+    "trial_end_date": null,
+    "billing_address": null,
+    "payment_method": null,
+    "preferences": null,
+    "system_preferences": null,
     "role": "member",
-    "status": "active",
     "is_verified": false,
-    "created_at": "2025-09-22T..."
-  },
-  "access_token": "jwt-token"
+    "two_factor_enabled": false,
+    "last_ip": null,
+    "last_device": null,
+    "status": "active",
+    "created_at": "2025-09-22T...",
+    "updated_at": "2025-09-22T...",
+    "last_login": null
+  }
 }
 ```
+
+**⚠️ IMPORTANTE:** O `access_token` não aparece na resposta, mas é automaticamente salvo como cookie HTTP-only!
 
 ---
 
@@ -45,6 +62,51 @@ http://localhost:3000
 {
   "email": "joao.silva@advogados.com.br",
   "password": "MinhaSenh@123"
+}
+```
+
+**Resposta (Cookie HTTP-only é atualizado automaticamente):**
+```json
+{
+  "user": {
+    "id": "uuid-do-usuario",
+    "tenant_id": null,
+    "name": "João Silva Santos",
+    "email": "joao.silva@advogados.com.br",
+    "phone": null,
+    "cpf_cnpj": null,
+    "profession": null,
+    "company_name": null,
+    "profile_picture_url": null,
+    "subscription_plan": "free",
+    "subscription_status": "trial",
+    "trial_end_date": null,
+    "billing_address": null,
+    "payment_method": null,
+    "preferences": null,
+    "system_preferences": null,
+    "role": "member",
+    "is_verified": false,
+    "two_factor_enabled": false,
+    "last_ip": null,
+    "last_device": null,
+    "status": "active",
+    "created_at": "2025-09-22T...",
+    "updated_at": "2025-09-22T...",
+    "last_login": null
+  }
+}
+```
+
+## **2.1️⃣ LOGOUT**
+
+### **POST /auth/logout**
+*(Não precisa de body - apenas cookie)*
+
+**Resposta:**
+```json
+{
+  "message": "Logout realizado com sucesso"
 }
 ```
 
@@ -304,6 +366,35 @@ http://localhost:3000
 5. **Verifique a completude** com `GET /users/profile/completeness` após cada atualização
 6. **Veja o perfil completo** com `GET /users/profile`
 
+### **⚙️ Configuração de Cookies (IMPORTANTE!):**
+
+**No Postman:**
+1. Vá em `Settings` → `General` 
+2. Ative `Automatically follow redirects`
+3. Ative `Send anonymous usage data to Postman` (opcional)
+4. **MAIS IMPORTANTE:** Na aba de uma requisição, vá em `Cookies` e certifique-se que está enviando cookies automaticamente
+
+**No Insomnia:**
+1. Os cookies são gerenciados automaticamente
+2. Verifique na aba `Timeline` se o cookie `access_token` está sendo enviado
+
+### **🐛 Troubleshooting:**
+
+**❌ Erro 401 Unauthorized:**
+- Verifique se fez login corretamente
+- Confirme que o cookie `access_token` está sendo enviado
+- Tente fazer logout e login novamente
+
+**❌ Erro 409 Conflict (Email/CPF duplicado):**
+- Use email diferente para cada teste
+- Use CPF/CNPJ diferentes
+- Limpe o banco de dados se necessário: `DROP DATABASE sjj_app; CREATE DATABASE sjj_app;`
+
+**❌ Erro de conexão com banco:**
+- Certifique-se que PostgreSQL está rodando
+- Verifique as variáveis de ambiente no `.env`
+- Recrie o banco: `DROP DATABASE IF EXISTS sjj_app; CREATE DATABASE sjj_app;`
+
 ---
 
 ## **📊 Fluxo Recomendado de UX:**
@@ -311,7 +402,21 @@ http://localhost:3000
 ```
 REGISTRO → LOGIN → PERSONAL INFO → ADDRESS → PAYMENT → PREFERENCES → SYSTEM CONFIG
    |          |           |           |          |          |            |
-   3%       18%         45%         63%       81%        90%         100%
+  18%       18%         45%         63%       81%        90%         100%
 ```
 
 **Cada etapa aumenta a completude do perfil gradualmente!** 🚀
+
+---
+
+## **🔍 Como Verificar Cookies no Navegador:**
+
+1. **Chrome/Edge:** F12 → Application → Cookies → localhost:3000
+2. **Firefox:** F12 → Storage → Cookies → http://localhost:3000
+3. **Procure por:** `access_token` com valor JWT
+
+**O cookie deve ter:**
+- `HttpOnly: true` ✅
+- `Secure: false` (em desenvolvimento) ✅  
+- `SameSite: Strict` ✅
+- `Max-Age: 604800` (7 dias) ✅
