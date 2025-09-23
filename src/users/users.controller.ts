@@ -16,6 +16,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from './entities/user.entity';
+
+interface AuthenticatedRequest extends Request {
+  user: User;
+}
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -36,13 +41,21 @@ export class UsersController {
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   getProfile(@Req() req: any) {
-    return this.usersService.findOne(req.user.sub);
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.usersService.findOne(userId);
   }
 
   @Get('profile/completeness')
   @UseGuards(JwtAuthGuard)
   getProfileCompleteness(@Req() req: any) {
-    return this.usersService.getProfileCompleteness(req.user.sub);
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.usersService.getProfileCompleteness(userId);
   }
 
   @Get(':id')
@@ -55,7 +68,11 @@ export class UsersController {
   @Patch('profile')
   @UseGuards(JwtAuthGuard)
   updateProfile(@Req() req: any, @Body() updateProfileDto: any) {
-    return this.usersService.updateProfile(req.user.sub, updateProfileDto);
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.usersService.updateProfile(userId, updateProfileDto);
   }
 
   // Atualização específica de informações pessoais
@@ -72,7 +89,11 @@ export class UsersController {
       profile_picture_url?: string;
     },
   ) {
-    return this.usersService.updateProfile(req.user.sub, personalInfo);
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.usersService.updateProfile(userId, personalInfo);
   }
 
   // Atualização específica de endereço
@@ -85,7 +106,11 @@ export class UsersController {
       billing_address?: any;
     },
   ) {
-    return this.usersService.updateProfile(req.user.sub, addressData);
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.usersService.updateProfile(userId, addressData);
   }
 
   // Atualização específica de preferências
@@ -99,7 +124,11 @@ export class UsersController {
       system_preferences?: any;
     },
   ) {
-    return this.usersService.updateProfile(req.user.sub, preferencesData);
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.usersService.updateProfile(userId, preferencesData);
   }
 
   // Atualização específica de método de pagamento
@@ -112,7 +141,11 @@ export class UsersController {
       payment_method?: any;
     },
   ) {
-    return this.usersService.updateProfile(req.user.sub, paymentData);
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.usersService.updateProfile(userId, paymentData);
   }
 
   @Patch(':id')

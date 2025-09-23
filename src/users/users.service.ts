@@ -188,6 +188,10 @@ export class UsersService {
     id: string,
     updateProfileDto: Partial<User>,
   ): Promise<User> {
+    if (!id) {
+      throw new Error('User ID is required');
+    }
+
     await this.findOne(id);
 
     await this.userRepository.update(id, {
