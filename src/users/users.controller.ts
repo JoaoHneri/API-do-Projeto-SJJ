@@ -14,13 +14,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { User } from './entities/user.entity';
-
-interface AuthenticatedRequest extends Request {
-  user: User;
-}
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)

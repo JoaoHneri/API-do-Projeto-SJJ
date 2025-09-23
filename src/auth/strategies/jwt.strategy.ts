@@ -31,7 +31,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<User> {
-
     try {
       const user = await this.usersService.findOne(payload.sub);
 
@@ -49,7 +48,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
       return user;
     } catch (error) {
-      throw new UnauthorizedException(error.message);
+      const message =
+        error instanceof Error ? error.message : 'Authentication failed';
+      throw new UnauthorizedException(message);
     }
   }
 }

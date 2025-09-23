@@ -115,7 +115,7 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   @MaxLength(20)
-  @Matches(/^\+?[\d\s\-\(\)]+$/, {
+  @Matches(/^\+?[\d\s\-()]+$/, {
     message: 'Telefone deve ter formato válido',
   })
   phone?: string;

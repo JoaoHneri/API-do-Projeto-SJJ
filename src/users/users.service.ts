@@ -8,7 +8,6 @@ import { Repository, IsNull } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User, UserStatus, SubscriptionPlan } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -120,13 +119,13 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: Partial<User>): Promise<User> {
     const user = await this.findOne(id);
 
     // Verificar se email já existe (se estiver sendo alterado)
     if (updateUserDto.email && updateUserDto.email !== user.email) {
       const existingUser = await this.userRepository.findOne({
-        where: { email: updateUserDto.email as string },
+        where: { email: updateUserDto.email },
       });
       if (existingUser && existingUser.id !== id) {
         throw new ConflictException('Email already exists');
@@ -136,7 +135,7 @@ export class UsersService {
     // Verificar se CPF/CNPJ já existe (se estiver sendo alterado)
     if (updateUserDto.cpf_cnpj && updateUserDto.cpf_cnpj !== user.cpf_cnpj) {
       const existingUser = await this.userRepository.findOne({
-        where: { cpf_cnpj: updateUserDto.cpf_cnpj as string },
+        where: { cpf_cnpj: updateUserDto.cpf_cnpj },
       });
       if (existingUser && existingUser.id !== id) {
         throw new ConflictException('CPF/CNPJ already exists');
